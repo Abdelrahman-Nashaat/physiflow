@@ -1,0 +1,35 @@
+{
+  "name": "PatientMessage",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0631\u064a\u0636"
+    },
+    "patient_name": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u0645\u0631\u064a\u0636"
+    },
+    "message": {
+      "type": "string",
+      "title": "\u0627\u0644\u0631\u0633\u0627\u0644\u0629"
+    },
+    "reply": {
+      "type": "string",
+      "title": "\u0631\u062f \u0627\u0644\u062f\u0643\u062a\u0648\u0631"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "replied"
+      ],
+      "title": "\u0627\u0644\u062d\u0627\u0644\u0629",
+      "default": "pending"
+    }
+  },
+  "required": [
+    "patient_id",
+    "message"
+  ]
+}

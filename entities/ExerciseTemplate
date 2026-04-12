@@ -1,0 +1,59 @@
+{
+  "name": "ExerciseTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u062a\u0645\u0631\u064a\u0646"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "spine",
+        "knee",
+        "shoulder",
+        "hip",
+        "ankle",
+        "neck",
+        "general"
+      ],
+      "title": "\u0627\u0644\u0641\u0626\u0629"
+    },
+    "description": {
+      "type": "string",
+      "title": "\u0627\u0644\u0648\u0635\u0641"
+    },
+    "instructions": {
+      "type": "string",
+      "title": "\u0627\u0644\u062a\u0639\u0644\u064a\u0645\u0627\u062a"
+    },
+    "sets": {
+      "type": "number",
+      "title": "\u0639\u062f\u062f \u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0627\u062a"
+    },
+    "reps": {
+      "type": "number",
+      "title": "\u0639\u062f\u062f \u0627\u0644\u062a\u0643\u0631\u0627\u0631\u0627\u062a"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "title": "\u0627\u0644\u0645\u062f\u0629 (\u062b\u0627\u0646\u064a\u0629)"
+    },
+    "frequency": {
+      "type": "string",
+      "title": "\u0627\u0644\u062a\u0643\u0631\u0627\u0631 \u0627\u0644\u064a\u0648\u0645\u064a"
+    },
+    "precautions": {
+      "type": "string",
+      "title": "\u062a\u062d\u0630\u064a\u0631\u0627\u062a"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "\u0635\u0648\u0631\u0629 \u0627\u0644\u062a\u0645\u0631\u064a\u0646"
+    }
+  },
+  "required": [
+    "name",
+    "category"
+  ]
+}

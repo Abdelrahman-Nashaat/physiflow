@@ -1,0 +1,46 @@
+{
+  "name": "HomeExerciseLog",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0631\u064a\u0636"
+    },
+    "patient_name": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u0645\u0631\u064a\u0636"
+    },
+    "log_date": {
+      "type": "string",
+      "title": "\u0627\u0644\u062a\u0627\u0631\u064a\u062e"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "partial",
+        "missed"
+      ],
+      "title": "\u0627\u0644\u062d\u0627\u0644\u0629",
+      "default": "completed"
+    },
+    "logged_by": {
+      "type": "string",
+      "enum": [
+        "patient",
+        "doctor",
+        "secretary"
+      ],
+      "title": "\u0633\u062c\u0651\u0644 \u0628\u0648\u0627\u0633\u0637\u0629",
+      "default": "doctor"
+    },
+    "notes": {
+      "type": "string",
+      "title": "\u0645\u0644\u0627\u062d\u0638\u0627\u062a"
+    }
+  },
+  "required": [
+    "patient_id",
+    "log_date"
+  ]
+}

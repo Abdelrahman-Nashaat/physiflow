@@ -1,0 +1,28 @@
+{
+  "name": "ExerciseCompletion",
+  "type": "object",
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "title": "\u0627\u0644\u0645\u0631\u064a\u0636"
+    },
+    "log_date": {
+      "type": "string",
+      "title": "\u0627\u0644\u062a\u0627\u0631\u064a\u062e"
+    },
+    "exercise_name": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u062a\u0645\u0631\u064a\u0646"
+    },
+    "completed": {
+      "type": "boolean",
+      "title": "\u062a\u0645",
+      "default": false
+    }
+  },
+  "required": [
+    "patient_id",
+    "log_date",
+    "exercise_name"
+  ]
+}

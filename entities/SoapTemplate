@@ -1,0 +1,47 @@
+{
+  "name": "SoapTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "\u0627\u0633\u0645 \u0627\u0644\u0642\u0627\u0644\u0628"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "spine",
+        "knee",
+        "shoulder",
+        "hip",
+        "ankle",
+        "neck",
+        "general"
+      ],
+      "title": "\u0627\u0644\u0641\u0626\u0629"
+    },
+    "subjective": {
+      "type": "string",
+      "title": "\u0627\u0644\u0634\u0643\u0648\u0649 (S)"
+    },
+    "objective": {
+      "type": "string",
+      "title": "\u0627\u0644\u0641\u062d\u0635 (O)"
+    },
+    "assessment": {
+      "type": "string",
+      "title": "\u0627\u0644\u062a\u0642\u064a\u064a\u0645 (A)"
+    },
+    "plan": {
+      "type": "string",
+      "title": "\u0627\u0644\u062e\u0637\u0629 (P)"
+    },
+    "exercises": {
+      "type": "string",
+      "title": "\u0627\u0644\u062a\u0645\u0627\u0631\u064a\u0646 \u0627\u0644\u0645\u0646\u0632\u0644\u064a\u0629"
+    }
+  },
+  "required": [
+    "name",
+    "category"
+  ]
+}

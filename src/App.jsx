@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -21,8 +21,16 @@ import Settings from './pages/Settings';
 import PackagesAndFinance from './pages/PackagesAndFinance';
 import DemoSeeder from './pages/DemoSeeder';
 
+// Redirect patient role to portal automatically
+function RootRedirect() {
+  const { user } = useAuth();
+  if (user?.role === 'patient') return <Navigate to="/portal" replace />;
+  if (user?.role === 'secretary') return <Navigate to="/secretary" replace />;
+  return <Dashboard />;
+}
+
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, authError } = useAuth();
 
   if (isLoadingAuth) {
     return (
@@ -32,19 +40,14 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError?.type === 'user_not_registered') {
-    return <UserNotRegisteredError />;
-  }
-
-  if (authError?.type === 'auth_required') {
-    return <Login />;
-  }
+  if (authError?.type === 'user_not_registered') return <UserNotRegisteredError />;
+  if (authError?.type === 'auth_required') return <Login />;
 
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<RootRedirect />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/patients/:id" element={<PatientDetail />} />
         <Route path="/appointments" element={<Appointments />} />

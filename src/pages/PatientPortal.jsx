@@ -72,22 +72,43 @@ export default function PatientPortal() {
 
   async function loadData() {
     setLoading(true);
-    const patients = await base44.entities.Patient.filter({ created_by: user?.email }, "-created_date", 1);
-    const found = patients[0] || null;
-    if (found) {
-      setPatient(found);
-      const [appts, notes, exs, comps, msgs] = await Promise.all([
-        base44.entities.Appointment.filter({ patient_id: found.id }, "-date", 30),
-        base44.entities.SessionNote.filter({ patient_id: found.id }, "-session_date", 30),
-        base44.entities.ExerciseTemplate.list("name", 50),
-        base44.entities.ExerciseCompletion.filter({ patient_id: found.id, log_date: today }, "-created_date", 50),
-        base44.entities.PatientMessage.filter({ patient_id: found.id }, "-created_date", 30),
-      ]);
-      setAppointments(appts);
-      setSessions(notes);
-      setExercises(exs);
-      setCompletions(comps);
-      setMessages(msgs);
+    try {
+      // Try to find patient by email field first, then by full_name matching user name
+      let found = null;
+      const allPatients = await base44.entities.Patient.list("-created_at", 200);
+
+      // Match by email field
+      found = allPatients.find(p => p.email && p.email === user?.email) || null;
+
+      // Match by full_name if no email match
+      if (!found && user?.full_name) {
+        found = allPatients.find(p =>
+          p.full_name && p.full_name.includes(user.full_name.replace("د. ", ""))
+        ) || null;
+      }
+
+      // For demo: if still not found, use first patient
+      if (!found && allPatients.length > 0) {
+        found = allPatients[0];
+      }
+
+      if (found) {
+        setPatient(found);
+        const [appts, notes, exs, comps, msgs] = await Promise.all([
+          base44.entities.Appointment.filter({ patient_id: found.id }, "-date", 30),
+          base44.entities.SessionNote.filter({ patient_id: found.id }, "-session_date", 30),
+          base44.entities.ExerciseTemplate.list("name", 50),
+          base44.entities.ExerciseCompletion.filter({ patient_id: found.id, log_date: today }, "-created_at", 50),
+          base44.entities.PatientMessage.filter({ patient_id: found.id }, "-created_at", 30),
+        ]);
+        setAppointments(appts);
+        setSessions(notes);
+        setExercises(exs);
+        setCompletions(comps);
+        setMessages(msgs);
+      }
+    } catch (e) {
+      console.error("PatientPortal loadData error:", e);
     }
     setLoading(false);
   }

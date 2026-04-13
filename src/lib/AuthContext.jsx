@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
+
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
@@ -35,6 +35,8 @@ export const AuthProvider = ({ children }) => {
       email: supabaseUser.email,
       full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
       role: supabaseUser.user_metadata?.role || 'doctor',
+      // للمرضى: الـ admin يضيف patient_id في user_metadata لربط الحساب بالملف
+      patient_id: supabaseUser.user_metadata?.patient_id || null,
     };
   }
 
@@ -72,9 +74,7 @@ export const AuthProvider = ({ children }) => {
       user,
       isAuthenticated,
       isLoadingAuth,
-      isLoadingPublicSettings,
       authError,
-      appPublicSettings: null,
       logout,
       navigateToLogin,
       checkAppState: checkSession,

@@ -118,33 +118,35 @@ function createEntityWrapper(entityName) {
   };
 }
 
-// AI Integration using Groq (replaces base44.integrations.Core.InvokeLLM)
+// AI Integration — calls Supabase Edge Function (groq-proxy)
+// الـ Groq API key محفوظة على السيرفر فقط، مش في الـ browser
 const integrations = {
   Core: {
     async InvokeLLM({ prompt }) {
-      const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY;
-      
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GROQ_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 500,
-          temperature: 0.7,
-        }),
-      });
-      
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error('يجب تسجيل الدخول أولاً');
+
+      const res = await fetch(
+        `${SUPABASE_URL}/functions/v1/groq-proxy`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'apikey': SUPABASE_KEY,
+          },
+          body: JSON.stringify({ prompt }),
+        }
+      );
+
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error?.message || 'Groq API error');
+        throw new Error(err.error || 'خطأ في خدمة الـ AI');
       }
-      
+
       const data = await res.json();
-      return data.choices[0]?.message?.content || '';
+      return data.result || '';
     },
   },
 };

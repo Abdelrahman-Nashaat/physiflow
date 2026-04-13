@@ -73,25 +73,31 @@ export default function PatientPortal() {
   async function loadData() {
     setLoading(true);
     try {
-      // Try to find patient by email field first, then by full_name matching user name
+      // Match patient to logged-in user:
+      // Priority 1: patient_id stored in Supabase user_metadata (most reliable)
+      // Priority 2: email match against patients.email field
       let found = null;
-      const allPatients = await base44.entities.Patient.list("-created_at", 200);
 
-      // Match by email field
-      found = allPatients.find(p => p.email && p.email === user?.email) || null;
+      if (user?.patient_id) {
+        // Best case: admin linked the account via user_metadata → patient_id
+        const { supabase } = await import("@/api/base44Client");
+        const { data } = await supabase
+          .from("patients")
+          .select("*")
+          .eq("id", user.patient_id)
+          .single();
+        found = data || null;
+      }
 
-      // Match by full_name if no email match
-      if (!found && user?.full_name) {
-        found = allPatients.find(p =>
-          p.full_name && p.full_name.includes(user.full_name.replace("د. ", ""))
+      if (!found && user?.email) {
+        // Fallback: match by email stored in the patient record
+        const allPatients = await base44.entities.Patient.list("-created_at", 500);
+        found = allPatients.find(
+          p => p.email && p.email.toLowerCase() === user.email.toLowerCase()
         ) || null;
       }
 
-      // For demo: if still not found, use first patient
-      if (!found && allPatients.length > 0) {
-        found = allPatients[0];
-      }
-
+      // No match → don't load any data (never leak another patient's records)
       if (found) {
         setPatient(found);
         const [appts, notes, exs, comps, msgs] = await Promise.all([

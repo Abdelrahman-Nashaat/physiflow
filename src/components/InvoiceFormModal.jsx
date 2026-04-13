@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ export default function InvoiceFormModal({ invoice, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    base44.entities.Patient.list("-full_name", 200).then(setPatients);
+    api.entities.Patient.list("-full_name", 200).then(setPatients);
   }, []);
 
   const set = (k, v) => setForm(f => {
@@ -55,9 +55,9 @@ export default function InvoiceFormModal({ invoice, onClose, onSaved }) {
       remaining: Number(form.total_amount) - Number(form.paid_amount),
     };
     if (invoice?.id) {
-      await base44.entities.Invoice.update(invoice.id, data);
+      await api.entities.Invoice.update(invoice.id, data);
     } else {
-      await base44.entities.Invoice.create(data);
+      await api.entities.Invoice.create(data);
     }
     onSaved();
   }

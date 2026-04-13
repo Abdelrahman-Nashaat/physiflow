@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { MessageCircle, Send, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,7 +13,7 @@ export default function PatientMessagesPanel() {
 
   async function load() {
     setLoading(true);
-    const msgs = await base44.entities.PatientMessage.filter({ status: "pending" }, "-created_date", 20);
+    const msgs = await api.entities.PatientMessage.filter({ status: "pending" }, "-created_date", 20);
     setMessages(msgs);
     setLoading(false);
   }
@@ -22,7 +22,7 @@ export default function PatientMessagesPanel() {
     const reply = replies[msg.id];
     if (!reply?.trim()) return;
     setSending(msg.id);
-    await base44.entities.PatientMessage.update(msg.id, { reply: reply.trim(), status: "replied" });
+    await api.entities.PatientMessage.update(msg.id, { reply: reply.trim(), status: "replied" });
     setSending(null);
     setReplies(r => { const n = { ...r }; delete n[msg.id]; return n; });
     load();

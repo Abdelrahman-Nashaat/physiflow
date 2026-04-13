@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { format, subMonths } from "date-fns";
 import { ar } from "date-fns/locale";
 import { Package, AlertTriangle, TrendingUp, Plus, X, Download } from "lucide-react";
@@ -22,9 +22,9 @@ export default function PackagesAndFinance() {
   async function loadData() {
     setLoading(true);
     const [pkgs, pats, invs] = await Promise.all([
-      base44.entities.TreatmentPackage.list("-created_date", 200),
-      base44.entities.Patient.list("-created_date", 200),
-      base44.entities.Invoice.list("-date", 500),
+      api.entities.TreatmentPackage.list("-created_date", 200),
+      api.entities.Patient.list("-created_date", 200),
+      api.entities.Invoice.list("-date", 500),
     ]);
     setPackages(pkgs);
     setPatients(pats);
@@ -41,7 +41,7 @@ export default function PackagesAndFinance() {
     e.preventDefault();
     if (!form.patient_id || !form.package_name || !form.sessions_count || !form.price) return;
     setSaving(true);
-    await base44.entities.TreatmentPackage.create({
+    await api.entities.TreatmentPackage.create({
       ...form,
       sessions_count: Number(form.sessions_count),
       sessions_used: 0,
@@ -57,7 +57,7 @@ export default function PackagesAndFinance() {
   async function updateUsed(pkg, delta) {
     const used = Math.max(0, Math.min(pkg.sessions_count, (pkg.sessions_used || 0) + delta));
     const status = used >= pkg.sessions_count ? "completed" : "active";
-    await base44.entities.TreatmentPackage.update(pkg.id, { sessions_used: used, status });
+    await api.entities.TreatmentPackage.update(pkg.id, { sessions_used: used, status });
     loadData();
   }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { MessageSquare, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ export default function DoctorMessages() {
 
   async function load() {
     setLoading(true);
-    const data = await base44.entities.PatientMessage.filter({ status: "pending" }, "-created_date", 20);
+    const data = await api.entities.PatientMessage.filter({ status: "pending" }, "-created_date", 20);
     setMessages(data);
     setLoading(false);
   }
@@ -23,7 +23,7 @@ export default function DoctorMessages() {
   async function sendReply(msg) {
     if (!replyText.trim()) return;
     setSaving(true);
-    await base44.entities.PatientMessage.update(msg.id, { reply: replyText.trim(), status: "replied" });
+    await api.entities.PatientMessage.update(msg.id, { reply: replyText.trim(), status: "replied" });
     setSaving(false);
     setReplyId(null);
     setReplyText("");

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,9 +28,9 @@ export default function PatientFormModal({ patient, onClose, onSaved }) {
     setSaving(true);
     const data = { ...form, age: form.age ? Number(form.age) : undefined, total_sessions_prescribed: form.total_sessions_prescribed ? Number(form.total_sessions_prescribed) : undefined };
     if (patient?.id) {
-      await base44.entities.Patient.update(patient.id, data);
+      await api.entities.Patient.update(patient.id, data);
     } else {
-      await base44.entities.Patient.create(data);
+      await api.entities.Patient.create(data);
     }
     onSaved();
   }

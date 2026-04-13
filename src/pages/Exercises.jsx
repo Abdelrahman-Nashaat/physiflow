@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Plus, Search, Activity, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,7 @@ export default function Exercises() {
 
   async function loadExercises() {
     setLoading(true);
-    const data = await base44.entities.ExerciseTemplate.list("name", 200);
+    const data = await api.entities.ExerciseTemplate.list("name", 200);
     setExercises(data);
     setFiltered(data);
     setLoading(false);
@@ -53,8 +53,8 @@ export default function Exercises() {
     e.preventDefault();
     setSaving(true);
     const data = { ...form, sets: form.sets ? Number(form.sets) : undefined, reps: form.reps ? Number(form.reps) : undefined, duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : undefined };
-    if (editEx?.id) await base44.entities.ExerciseTemplate.update(editEx.id, data);
-    else await base44.entities.ExerciseTemplate.create(data);
+    if (editEx?.id) await api.entities.ExerciseTemplate.update(editEx.id, data);
+    else await api.entities.ExerciseTemplate.create(data);
     setShowForm(false);
     setSaving(false);
     loadExercises();

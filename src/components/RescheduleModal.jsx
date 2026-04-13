@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,7 @@ export default function RescheduleModal({ appointment, onClose, onSaved }) {
     if (!form.date) { setError("يرجى تحديد التاريخ الجديد"); return; }
     if (!form.time) { setError("يرجى تحديد الوقت الجديد"); return; }
     setSaving(true);
-    await base44.entities.Appointment.update(appointment.id, {
+    await api.entities.Appointment.update(appointment.id, {
       date: form.date,
       time: form.time,
       status: "scheduled",

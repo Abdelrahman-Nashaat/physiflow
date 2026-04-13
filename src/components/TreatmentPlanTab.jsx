@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Target, Edit2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ export default function TreatmentPlanTab({ patient }) {
 
   async function load() {
     setLoading(true);
-    const plans = await base44.entities.TreatmentPlan.filter({ patient_id: patient.id }, "-created_date", 1);
+    const plans = await api.entities.TreatmentPlan.filter({ patient_id: patient.id }, "-created_date", 1);
     if (plans[0]) {
       setPlan(plans[0]);
       setForm({
@@ -38,8 +38,8 @@ export default function TreatmentPlanTab({ patient }) {
       patient_id: patient.id, patient_name: patient.full_name, ...form,
       planned_sessions: form.planned_sessions ? Number(form.planned_sessions) : undefined
     };
-    if (plan?.id) await base44.entities.TreatmentPlan.update(plan.id, data);
-    else await base44.entities.TreatmentPlan.create(data);
+    if (plan?.id) await api.entities.TreatmentPlan.update(plan.id, data);
+    else await api.entities.TreatmentPlan.create(data);
     setSaving(false);
     setEditing(false);
     load();

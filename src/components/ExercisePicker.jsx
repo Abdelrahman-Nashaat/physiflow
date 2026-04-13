@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Activity, X, Search, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +18,7 @@ export default function ExercisePicker({ selected = [], onChange }) {
   useEffect(() => {
     if (open && exercises.length === 0) {
       setLoading(true);
-      base44.entities.ExerciseTemplate.list("name", 200).then(data => {
+      api.entities.ExerciseTemplate.list("name", 200).then(data => {
         setExercises(data);
         setLoading(false);
       });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { format, addDays, subDays } from "date-fns";
 import { ar } from "date-fns/locale";
 import { Clock, AlertCircle, Calendar, TrendingUp, Users, CheckCircle, List } from "lucide-react";
@@ -39,12 +39,12 @@ export default function SecretaryDashboard() {
   async function loadData() {
     setLoading(true);
     const [tAppts, tmAppts, invoices, patients, allAppts, waiting] = await Promise.all([
-      base44.entities.Appointment.filter({ date: today }, "time", 30),
-      base44.entities.Appointment.filter({ date: tomorrow }, "time", 30),
-      base44.entities.Invoice.list("-date", 500),
-      base44.entities.Patient.list("-created_date", 500),
-      base44.entities.Appointment.list("-date", 500),
-      base44.entities.WaitingList.filter({ status: "waiting" }, "-created_date", 50),
+      api.entities.Appointment.filter({ date: today }, "time", 30),
+      api.entities.Appointment.filter({ date: tomorrow }, "time", 30),
+      api.entities.Invoice.list("-date", 500),
+      api.entities.Patient.list("-created_date", 500),
+      api.entities.Appointment.list("-date", 500),
+      api.entities.WaitingList.filter({ status: "waiting" }, "-created_date", 50),
     ]);
 
     // Pending invoices older than 7 days
@@ -72,14 +72,14 @@ export default function SecretaryDashboard() {
 
   async function confirmAttendance(appt) {
     setUpdating(appt.id);
-    await base44.entities.Appointment.update(appt.id, { status: "confirmed" });
+    await api.entities.Appointment.update(appt.id, { status: "confirmed" });
     setUpdating(null);
     loadData();
   }
 
   async function markCompleted(appt) {
     setUpdating(appt.id);
-    await base44.entities.Appointment.update(appt.id, { status: "completed" });
+    await api.entities.Appointment.update(appt.id, { status: "completed" });
     setUpdating(null);
     loadData();
   }

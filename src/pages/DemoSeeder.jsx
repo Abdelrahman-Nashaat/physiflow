@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Button } from "@/components/ui/button";
 import { Database, Trash2, Loader2 } from "lucide-react";
 
@@ -40,18 +40,18 @@ export default function DemoSeeder() {
       setStatus("إضافة المرضى...");
       const patients = [];
       for (const p of DEMO_PATIENTS) {
-        const created = await base44.entities.Patient.create(p);
+        const created = await api.entities.Patient.create(p);
         patients.push(created);
       }
 
       setStatus("إضافة التمارين...");
       for (const ex of DEMO_EXERCISES) {
-        await base44.entities.ExerciseTemplate.create(ex);
+        await api.entities.ExerciseTemplate.create(ex);
       }
 
       setStatus("إضافة قوالب SOAP...");
       for (const t of DEMO_SOAP_TEMPLATES) {
-        await base44.entities.SoapTemplate.create(t);
+        await api.entities.SoapTemplate.create(t);
       }
 
       setStatus("إضافة المواعيد...");
@@ -61,7 +61,7 @@ export default function DemoSeeder() {
         const d = new Date(today);
         d.setDate(today.getDate() + i);
         const dateStr = d.toISOString().split("T")[0];
-        await base44.entities.Appointment.create({
+        await api.entities.Appointment.create({
           patient_id: patients[i].id,
           patient_name: patients[i].full_name,
           date: dateStr,
@@ -82,7 +82,7 @@ export default function DemoSeeder() {
       for (let i = 0; i < sessionData.length; i++) {
         const sd = new Date(today);
         sd.setDate(today.getDate() - (3 - i) * 3);
-        await base44.entities.SessionNote.create({
+        await api.entities.SessionNote.create({
           patient_id: patients[0].id,
           patient_name: patients[0].full_name,
           session_date: sd.toISOString().split("T")[0],
@@ -94,7 +94,7 @@ export default function DemoSeeder() {
       }
 
       setStatus("إضافة الفواتير...");
-      await base44.entities.Invoice.create({
+      await api.entities.Invoice.create({
         patient_id: patients[0].id,
         patient_name: patients[0].full_name,
         date: today.toISOString().split("T")[0],
@@ -106,7 +106,7 @@ export default function DemoSeeder() {
         status: "partial",
         payment_method: "cash",
       });
-      await base44.entities.Invoice.create({
+      await api.entities.Invoice.create({
         patient_id: patients[1].id,
         patient_name: patients[1].full_name,
         date: today.toISOString().split("T")[0],

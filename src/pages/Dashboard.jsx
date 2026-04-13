@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Link } from "react-router-dom";
 import { Users, Calendar, TrendingUp, Receipt, Clock, CheckCircle, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
@@ -21,11 +21,11 @@ export default function Dashboard() {
   async function loadData() {
     const today = format(new Date(), "yyyy-MM-dd");
     const [patients, appointments, invoices, sessions, allAppts] = await Promise.all([
-      base44.entities.Patient.list("-created_date", 500),
-      base44.entities.Appointment.filter({ date: today }, "time", 20),
-      base44.entities.Invoice.filter({ status: "pending" }, "-created_date", 100),
-      base44.entities.SessionNote.list("-session_date", 500),
-      base44.entities.Appointment.list("-date", 500),
+      api.entities.Patient.list("-created_date", 500),
+      api.entities.Appointment.filter({ date: today }, "time", 20),
+      api.entities.Invoice.filter({ status: "pending" }, "-created_date", 100),
+      api.entities.SessionNote.list("-session_date", 500),
+      api.entities.Appointment.list("-date", 500),
     ]);
 
     const completed = appointments.filter(a => a.status === "completed").length;

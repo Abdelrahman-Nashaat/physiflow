@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '@/api/base44Client';
+import { supabase } from '@/api/apiClient';
 import { Stethoscope, LogIn, Loader2, FlaskConical } from 'lucide-react';
 
 const DEMO_ACCOUNTS = [

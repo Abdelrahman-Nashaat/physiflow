@@ -251,3 +251,68 @@ ALTER TABLE exercise_completions DISABLE ROW LEVEL SECURITY;
 -- =============================================
 -- Done! 13 tables created successfully.
 -- =============================================
+
+-- =============================================
+-- ROW LEVEL SECURITY — تأمين البيانات
+-- =============================================
+-- سياسة بسيطة: أي مستخدم مسجّل (authenticated) يقدر يقرأ ويكتب
+-- مناسب لعيادة واحدة عندها دكتور وسكرتيرة وموظفين موثوقين
+-- لو عايز تقيّد أكتر (مثلاً: المريض يشوف بياناته بس) راجع الـ README
+
+ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE session_notes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE exercise_templates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE soap_templates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE treatment_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE home_exercise_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE patient_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE clinic_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE treatment_packages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE waiting_list ENABLE ROW LEVEL SECURITY;
+ALTER TABLE exercise_completions ENABLE ROW LEVEL SECURITY;
+
+-- Policy: الـ authenticated users (دكتور / سكرتيرة) عندهم full access
+CREATE POLICY "authenticated full access" ON patients
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON appointments
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON session_notes
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON invoices
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON exercise_templates
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON soap_templates
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON treatment_plans
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON home_exercise_logs
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON patient_messages
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON clinic_settings
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON treatment_packages
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON waiting_list
+  FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated full access" ON exercise_completions
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- =============================================
+-- انتهى! المشروع آمن دلوقتي ✅
+-- =============================================

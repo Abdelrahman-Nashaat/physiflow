@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { ArrowRight, Phone, Edit, Calendar, FileText, Receipt, Sparkles, BarChart2, Target, Home } from "lucide-react";
 import WhatsAppReminder from "@/components/WhatsAppReminder";
 import PDFExportButton from "@/components/PDFExportButton";
@@ -25,10 +25,10 @@ export default function PatientDetail() {
 
   async function loadAll() {
     const [p, appts, ns, invs] = await Promise.all([
-      base44.entities.Patient.filter({ id }, "-created_date", 1),
-      base44.entities.Appointment.filter({ patient_id: id }, "-date", 50),
-      base44.entities.SessionNote.filter({ patient_id: id }, "-session_date", 50),
-      base44.entities.Invoice.filter({ patient_id: id }, "-date", 50),
+      api.entities.Patient.filter({ id }, "-created_date", 1),
+      api.entities.Appointment.filter({ patient_id: id }, "-date", 50),
+      api.entities.SessionNote.filter({ patient_id: id }, "-session_date", 50),
+      api.entities.Invoice.filter({ patient_id: id }, "-date", 50),
     ]);
     setPatient(p[0]);
     setAppointments(appts);
@@ -41,7 +41,7 @@ export default function PatientDetail() {
     const notesText = notes.map(n =>
       `جلسة ${n.session_number}: ${n.subjective || ""} | تقييم: ${n.assessment || ""} | خطة: ${n.plan || ""} | ألم قبل: ${n.pain_before}/10 بعد: ${n.pain_after}/10`
     ).join("\n");
-    const res = await base44.integrations.Core.InvokeLLM({
+    const res = await api.integrations.Core.InvokeLLM({
       prompt: `أنت دكتور علاج طبيعي خبير. قدم ملخصاً احترافياً شاملاً لحالة المريض التالي باللغة العربية:
 المريض: ${patient.full_name}
 التشخيص: ${patient.diagnosis || "غير محدد"}

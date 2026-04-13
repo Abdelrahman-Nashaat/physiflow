@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X, Clock, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,10 +14,10 @@ export default function WaitingListModal({ onClose }) {
   const [confirmDel, setConfirmDel] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => { load(); base44.entities.Patient.list("-created_date", 200).then(setPatients); }, []);
+  useEffect(() => { load(); api.entities.Patient.list("-created_date", 200).then(setPatients); }, []);
 
   async function load() {
-    const data = await base44.entities.WaitingList.filter({ status: "waiting" }, "-created_date", 50);
+    const data = await api.entities.WaitingList.filter({ status: "waiting" }, "-created_date", 50);
     setList(data);
   }
 
@@ -29,7 +29,7 @@ export default function WaitingListModal({ onClose }) {
   async function save() {
     if (!form.patient_name || !form.phone) return;
     setSaving(true);
-    await base44.entities.WaitingList.create({ ...form, status: "waiting" });
+    await api.entities.WaitingList.create({ ...form, status: "waiting" });
     setSaving(false);
     setShowForm(false);
     setForm({ patient_id: "", patient_name: "", phone: "", preferred_date: "", preferred_time: "", notes: "" });
@@ -37,13 +37,13 @@ export default function WaitingListModal({ onClose }) {
   }
 
   async function remove(id) {
-    await base44.entities.WaitingList.delete(id);
+    await api.entities.WaitingList.delete(id);
     setConfirmDel(null);
     load();
   }
 
   async function markScheduled(id) {
-    await base44.entities.WaitingList.update(id, { status: "scheduled" });
+    await api.entities.WaitingList.update(id, { status: "scheduled" });
     load();
   }
 

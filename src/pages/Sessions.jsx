@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Plus, FileText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SessionNoteModal from "@/components/SessionNoteModal";
@@ -17,7 +17,7 @@ export default function Sessions() {
 
   async function loadNotes() {
     setLoading(true);
-    const data = await base44.entities.SessionNote.list("-session_date", 100);
+    const data = await api.entities.SessionNote.list("-session_date", 100);
     setNotes(data);
     setLoading(false);
   }

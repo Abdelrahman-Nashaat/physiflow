@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Plus, ChevronRight, ChevronLeft, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, addDays, subDays, startOfWeek } from "date-fns";
@@ -27,13 +27,13 @@ export default function Appointments() {
   async function loadAppointments() {
     setLoading(true);
     const dateStr = format(selectedDate, "yyyy-MM-dd");
-    const data = await base44.entities.Appointment.filter({ date: dateStr }, "time", 50);
+    const data = await api.entities.Appointment.filter({ date: dateStr }, "time", 50);
     setAppointments(data);
     setLoading(false);
   }
 
   async function updateStatus(id, status) {
-    await base44.entities.Appointment.update(id, { status });
+    await api.entities.Appointment.update(id, { status });
     loadAppointments();
   }
 

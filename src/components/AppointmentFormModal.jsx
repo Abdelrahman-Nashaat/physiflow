@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ export default function AppointmentFormModal({ appointment, defaultDate, onClose
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    base44.entities.Patient.list("-created_date", 200).then(setPatients);
+    api.entities.Patient.list("-created_date", 200).then(setPatients);
   }, []);
 
   function set(k, v) { setForm(f => ({ ...f, [k]: v })); }
@@ -44,9 +44,9 @@ export default function AppointmentFormModal({ appointment, defaultDate, onClose
       pain_level_before: form.pain_level_before ? Number(form.pain_level_before) : undefined,
     };
     if (appointment?.id) {
-      await base44.entities.Appointment.update(appointment.id, data);
+      await api.entities.Appointment.update(appointment.id, data);
     } else {
-      await base44.entities.Appointment.create(data);
+      await api.entities.Appointment.create(data);
     }
     onSaved();
   }

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Calendar, Activity, BarChart2, MessageCircle, Clock, Stethoscope, AlertCircle, Star, CheckCircle, Send, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, parseISO } from "date-fns";
@@ -80,7 +80,7 @@ export default function PatientPortal() {
 
       if (user?.patient_id) {
         // Best case: admin linked the account via user_metadata → patient_id
-        const { supabase } = await import("@/api/base44Client");
+        const { supabase } = await import("@/api/apiClient");
         const { data } = await supabase
           .from("patients")
           .select("*")
@@ -91,7 +91,7 @@ export default function PatientPortal() {
 
       if (!found && user?.email) {
         // Fallback: match by email stored in the patient record
-        const allPatients = await base44.entities.Patient.list("-created_at", 500);
+        const allPatients = await api.entities.Patient.list("-created_at", 500);
         found = allPatients.find(
           p => p.email && p.email.toLowerCase() === user.email.toLowerCase()
         ) || null;
@@ -101,11 +101,11 @@ export default function PatientPortal() {
       if (found) {
         setPatient(found);
         const [appts, notes, exs, comps, msgs] = await Promise.all([
-          base44.entities.Appointment.filter({ patient_id: found.id }, "-date", 30),
-          base44.entities.SessionNote.filter({ patient_id: found.id }, "-session_date", 30),
-          base44.entities.ExerciseTemplate.list("name", 50),
-          base44.entities.ExerciseCompletion.filter({ patient_id: found.id, log_date: today }, "-created_at", 50),
-          base44.entities.PatientMessage.filter({ patient_id: found.id }, "-created_at", 30),
+          api.entities.Appointment.filter({ patient_id: found.id }, "-date", 30),
+          api.entities.SessionNote.filter({ patient_id: found.id }, "-session_date", 30),
+          api.entities.ExerciseTemplate.list("name", 50),
+          api.entities.ExerciseCompletion.filter({ patient_id: found.id, log_date: today }, "-created_at", 50),
+          api.entities.PatientMessage.filter({ patient_id: found.id }, "-created_at", 30),
         ]);
         setAppointments(appts);
         setSessions(notes);
@@ -149,27 +149,27 @@ export default function PatientPortal() {
   async function toggleExercise(ex) {
     const exists = completions.find(c => c.exercise_name === ex.name && c.log_date === today);
     if (exists) {
-      await base44.entities.ExerciseCompletion.update(exists.id, { completed: !exists.completed });
+      await api.entities.ExerciseCompletion.update(exists.id, { completed: !exists.completed });
     } else {
-      await base44.entities.ExerciseCompletion.create({ patient_id: patient.id, log_date: today, exercise_name: ex.name, completed: true });
+      await api.entities.ExerciseCompletion.create({ patient_id: patient.id, log_date: today, exercise_name: ex.name, completed: true });
     }
-    const comps = await base44.entities.ExerciseCompletion.filter({ patient_id: patient.id, log_date: today }, "-created_date", 50);
+    const comps = await api.entities.ExerciseCompletion.filter({ patient_id: patient.id, log_date: today }, "-created_date", 50);
     setCompletions(comps);
   }
 
   async function completeAll() {
     await Promise.all(todayExs.map(async ex => {
       const exists = completions.find(c => c.exercise_name === ex.name && c.log_date === today);
-      if (!exists) await base44.entities.ExerciseCompletion.create({ patient_id: patient.id, log_date: today, exercise_name: ex.name, completed: true });
-      else if (!exists.completed) await base44.entities.ExerciseCompletion.update(exists.id, { completed: true });
+      if (!exists) await api.entities.ExerciseCompletion.create({ patient_id: patient.id, log_date: today, exercise_name: ex.name, completed: true });
+      else if (!exists.completed) await api.entities.ExerciseCompletion.update(exists.id, { completed: true });
     }));
-    const comps = await base44.entities.ExerciseCompletion.filter({ patient_id: patient.id, log_date: today }, "-created_date", 50);
+    const comps = await api.entities.ExerciseCompletion.filter({ patient_id: patient.id, log_date: today }, "-created_date", 50);
     setCompletions(comps);
   }
 
   async function submitRating() {
     setSavingRating(true);
-    await base44.entities.Appointment.update(ratingAppt.id, { patient_rating: starRating, notes: ratingComment || ratingAppt.notes });
+    await api.entities.Appointment.update(ratingAppt.id, { patient_rating: starRating, notes: ratingComment || ratingAppt.notes });
     setSavingRating(false);
     setRatingAppt(null);
     setRatingComment("");
@@ -179,7 +179,7 @@ export default function PatientPortal() {
   async function submitPostpone() {
     if (!postponeReason) return;
     setSavingPostpone(true);
-    await base44.entities.Appointment.update(postponeAppt.id, {
+    await api.entities.Appointment.update(postponeAppt.id, {
       status: "cancelled",
       notes: `طلب تأجيل من المريض — السبب: ${postponeReason}`,
     });
@@ -192,7 +192,7 @@ export default function PatientPortal() {
   async function sendMessage() {
     if (!newMsg.trim()) return;
     setSendingMsg(true);
-    await base44.entities.PatientMessage.create({
+    await api.entities.PatientMessage.create({
       patient_id: patient.id,
       patient_name: patient.full_name,
       message: newMsg.trim(),
@@ -200,13 +200,13 @@ export default function PatientPortal() {
     });
     setNewMsg("");
     setSendingMsg(false);
-    const msgs = await base44.entities.PatientMessage.filter({ patient_id: patient.id }, "-created_date", 30);
+    const msgs = await api.entities.PatientMessage.filter({ patient_id: patient.id }, "-created_date", 30);
     setMessages(msgs);
   }
 
   async function handleApptAction(id, action) {
     setUpdating(true);
-    await base44.entities.Appointment.update(id, { status: action === "confirm" ? "confirmed" : "cancelled" });
+    await api.entities.Appointment.update(id, { status: action === "confirm" ? "confirmed" : "cancelled" });
     setConfirmAction(null);
     setUpdating(false);
     loadData();

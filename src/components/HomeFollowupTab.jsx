@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { CheckCircle, XCircle, AlertTriangle, Plus, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,7 @@ export default function HomeFollowupTab({ patient }) {
 
   async function load() {
     setLoading(true);
-    const data = await base44.entities.HomeExerciseLog.filter({ patient_id: patient.id }, "-log_date", 60);
+    const data = await api.entities.HomeExerciseLog.filter({ patient_id: patient.id }, "-log_date", 60);
     setLogs(data);
     setLoading(false);
   }
@@ -32,8 +32,8 @@ export default function HomeFollowupTab({ patient }) {
     if (!form.log_date) return;
     setSaving(true);
     const data = { ...form, patient_id: patient.id, patient_name: patient.full_name };
-    if (editingId) await base44.entities.HomeExerciseLog.update(editingId, data);
-    else await base44.entities.HomeExerciseLog.create(data);
+    if (editingId) await api.entities.HomeExerciseLog.update(editingId, data);
+    else await api.entities.HomeExerciseLog.create(data);
     setSaving(false);
     setShowForm(false);
     setEditingId(null);

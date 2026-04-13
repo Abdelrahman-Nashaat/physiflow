@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Search, User, Calendar, Receipt, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -33,9 +33,9 @@ export default function GlobalSearch() {
     setLoading(true);
     setOpen(true);
     const [patients, appointments, invoices] = await Promise.all([
-      base44.entities.Patient.list("-created_date", 200),
-      base44.entities.Appointment.list("-date", 200),
-      base44.entities.Invoice.list("-date", 200),
+      api.entities.Patient.list("-created_date", 200),
+      api.entities.Appointment.list("-date", 200),
+      api.entities.Invoice.list("-date", 200),
     ]);
     const ql = q.toLowerCase();
     setResults({

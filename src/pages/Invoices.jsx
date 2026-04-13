@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Plus, Receipt, X } from "lucide-react";
 import ReceiptPDFButton from "@/components/ReceiptPDFButton";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,8 @@ export default function Invoices() {
 
   useEffect(() => {
     Promise.all([
-      base44.entities.Invoice.list("-date", 200),
-      base44.entities.Patient.list("-created_date", 200)
+      api.entities.Invoice.list("-date", 200),
+      api.entities.Patient.list("-created_date", 200)
     ]).then(([invs, pats]) => { setInvoices(invs); setPatients(pats); setLoading(false); });
   }, []);
 
@@ -52,9 +52,9 @@ export default function Invoices() {
     const total = Number(form.total_amount) || 0;
     const status = paid >= total ? "paid" : paid > 0 ? "partial" : "pending";
     const data = { ...form, sessions_count: Number(form.sessions_count) || 0, price_per_session: Number(form.price_per_session) || 0, total_amount: total, paid_amount: paid, remaining: total - paid, status };
-    if (editInv?.id) await base44.entities.Invoice.update(editInv.id, data);
-    else await base44.entities.Invoice.create(data);
-    const updated = await base44.entities.Invoice.list("-date", 200);
+    if (editInv?.id) await api.entities.Invoice.update(editInv.id, data);
+    else await api.entities.Invoice.create(data);
+    const updated = await api.entities.Invoice.list("-date", 200);
     setInvoices(updated);
     setShowForm(false); setSaving(false);
   }

@@ -4,8 +4,6 @@
 
 نظام متكامل لإدارة عيادات العلاج الطبيعي مبني بـ React + Supabase + Groq AI
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-فيزيوفلو-0ea5e9?style=for-the-badge)](YOUR_VERCEL_URL)
-
 ---
 
 ## ✨ المميزات
@@ -23,95 +21,101 @@
 
 ---
 
+## 🛠️ التقنيات
+
+- **Frontend:** React 18 + Vite + Tailwind CSS + shadcn/ui
+- **Database:** Supabase (PostgreSQL) مع RLS مفعّل
+- **Auth:** Supabase Auth
+- **AI:** Groq API عبر Supabase Edge Function (آمن)
+- **PDF:** jsPDF + html2canvas
+- **Charts:** Recharts
+
+---
+
 ## 🚀 تشغيل المشروع
 
-### المتطلبات
-- Node.js 18+
-- حساب Supabase (مجاني)
-- حساب Groq (مجاني)
+### الخطوة 1: قاعدة البيانات
 
-### الخطوات
+1. افتح Supabase Dashboard → SQL Editor
+2. شغّل محتوى `supabase_schema.sql` كامل
+3. هتشوف Success — 13 table + RLS policies
+
+### الخطوة 2: نشر Edge Function للـ AI
 
 ```bash
-# 1. Clone المشروع
-git clone https://github.com/Abdelrahman-Nashaat/physiflow.git
-cd physiflow
+npm install -g supabase
+supabase login
+supabase link --project-ref YOUR_PROJECT_REF
+supabase functions deploy groq-proxy
+```
 
-# 2. تثبيت المكتبات
+ثم في Supabase Dashboard → Edge Functions → groq-proxy → Secrets أضف:
+```
+GROQ_API_KEY = your_groq_api_key
+```
+
+### الخطوة 3: ملف `.env.local`
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+لا تضع GROQ_API_KEY هنا — تبقى في Supabase Secrets فقط.
+
+### الخطوة 4: تشغيل
+
+```bash
 npm install
-
-# 3. إنشاء ملف .env.local
-cp .env.example .env.local
-# عدّل القيم بـ credentials بتاعتك
-
-# 4. إنشاء الجداول في Supabase
-# افتح supabase_schema.sql وشغّله في SQL Editor
-
-# 5. تشغيل المشروع
 npm run dev
 ```
 
 ---
 
-## ⚙️ إعداد .env.local
+## 👥 إضافة المستخدمين
 
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_GROQ_API_KEY=your_groq_api_key
+### دكتور / سكرتيرة
+
+User Metadata في Supabase Auth:
+```json
+{ "full_name": "د. أحمد محمد", "role": "doctor" }
+```
+
+### مريض
+
+1. أنشئ ملف المريض في Patients وخذ الـ UUID
+2. أنشئ حساب Auth للمريض
+3. User Metadata:
+```json
+{ "full_name": "محمود علي", "role": "patient", "patient_id": "UUID_هنا" }
 ```
 
 ---
 
-## 🎭 إعداد حسابات Demo
+## 🔒 الأمان
 
-في Supabase → Authentication → Users، أضف 3 مستخدمين:
-
-```sql
--- بعد إنشاء كل user في Supabase Auth، شغّل:
-
-UPDATE auth.users SET raw_user_meta_data = 
-  '{"full_name": "د. أحمد محمد", "role": "doctor"}'::jsonb
-WHERE email = 'doctor@physiflow-demo.com';
-
-UPDATE auth.users SET raw_user_meta_data = 
-  '{"full_name": "سارة محمد", "role": "secretary"}'::jsonb
-WHERE email = 'secretary@physiflow-demo.com';
-
-UPDATE auth.users SET raw_user_meta_data = 
-  '{"full_name": "محمود علي", "role": "patient"}'::jsonb
-WHERE email = 'patient@physiflow-demo.com';
-```
-
-كلمة المرور للجميع: `Demo@physiflow1`
-
-بعدين افتح `/demo-seeder` وأضف بيانات تجريبية.
-
----
-
-## 🛠️ التقنيات المستخدمة
-
-- **Frontend:** React 18 + Vite + Tailwind CSS + shadcn/ui
-- **Database:** Supabase (PostgreSQL)
-- **Auth:** Supabase Auth
-- **AI:** Groq API (llama-3.3-70b) — ملخص الجلسات بالعربي
-- **PDF:** jsPDF + html2canvas
-- **Charts:** Recharts
+- RLS مفعّل على كل الجداول
+- Groq API key على السيرفر فقط (Edge Function)
+- المريض يشوف بياناته فقط عبر patient_id
 
 ---
 
 ## 📁 هيكل المشروع
 
 ```
-src/
-├── api/          # Supabase client
-├── components/   # مكونات قابلة للإعادة
-├── pages/        # صفحات التطبيق
-└── lib/          # Auth, utils
+physiflow/
+├── src/
+│   ├── api/           # Supabase client
+│   ├── components/    # مكونات قابلة للإعادة
+│   ├── pages/         # صفحات التطبيق
+│   └── lib/           # Auth context
+├── supabase/
+│   └── functions/
+│       └── groq-proxy/  # Edge Function للـ AI
+├── supabase_schema.sql
+└── vercel.json
 ```
 
----
-
-Built with ❤️ by [Abdelrahman Nashaat](https://github.com/Abdelrahman-Nashaat)
+Built with love by [Abdelrahman Nashaat](https://github.com/Abdelrahman-Nashaat)
 
 </div>

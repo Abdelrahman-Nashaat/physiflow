@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import GlobalSearch from "@/components/GlobalSearch";
 import { cn } from "@/lib/utils";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 
 const navItems = [
   { path: "/", label: "الرئيسية", icon: LayoutDashboard, roles: ["doctor", "admin"] },
@@ -86,7 +86,7 @@ export default function Layout() {
               <p className="text-sm font-medium truncate">{user?.full_name}</p>
               <p className="text-xs text-muted-foreground">{roleLabel[user?.role] || "دكتور"}</p>
             </div>
-            <button onClick={() => base44.auth.logout()} className="text-muted-foreground hover:text-destructive transition-colors">
+            <button onClick={() => api.auth.logout()} className="text-muted-foreground hover:text-destructive transition-colors">
               <LogOut className="w-4 h-4" />
             </button>
           </div>

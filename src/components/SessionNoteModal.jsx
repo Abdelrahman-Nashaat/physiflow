@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X, Sparkles, Download } from "lucide-react";
 import SoapTemplateSelector from "@/components/SoapTemplateSelector";
 import ExercisePicker from "@/components/ExercisePicker";
@@ -56,7 +56,7 @@ export default function SessionNoteModal({ note, patientId, onClose, onSaved }) 
   const [loadingLast, setLoadingLast] = useState(false);
 
   useEffect(() => {
-    base44.entities.Patient.list("-created_date", 200).then(setPatients);
+    api.entities.Patient.list("-created_date", 200).then(setPatients);
   }, []);
 
   function set(k, v) { setForm(f => ({ ...f, [k]: v })); }
@@ -75,7 +75,7 @@ export default function SessionNoteModal({ note, patientId, onClose, onSaved }) 
     const pid = form.patient_id;
     if (!pid) return;
     setLoadingLast(true);
-    const prev = await base44.entities.SessionNote.filter({ patient_id: pid }, "-session_number", 2);
+    const prev = await api.entities.SessionNote.filter({ patient_id: pid }, "-session_number", 2);
     const last = prev.find(s => !note || s.id !== note.id);
     if (last) {
       setForm(f => ({
@@ -100,7 +100,7 @@ export default function SessionNoteModal({ note, patientId, onClose, onSaved }) 
 
   async function generateAI() {
     setGeneratingAI(true);
-    const res = await base44.integrations.Core.InvokeLLM({
+    const res = await api.integrations.Core.InvokeLLM({
       prompt: `أنت معالج طبيعي. قدم ملخصاً احترافياً موجزاً للجلسة التالية باللغة العربية:
 الشكوى: ${form.subjective}
 الفحص: ${form.objective}
@@ -123,8 +123,8 @@ export default function SessionNoteModal({ note, patientId, onClose, onSaved }) 
       pain_before: form.pain_before !== null ? Number(form.pain_before) : undefined,
       pain_after: form.pain_after !== null ? Number(form.pain_after) : undefined,
     };
-    if (note?.id) await base44.entities.SessionNote.update(note.id, data);
-    else await base44.entities.SessionNote.create(data);
+    if (note?.id) await api.entities.SessionNote.update(note.id, data);
+    else await api.entities.SessionNote.create(data);
     onSaved();
   }
 

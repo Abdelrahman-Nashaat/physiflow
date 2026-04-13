@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44, supabase } from "@/api/base44Client";
+import { api, supabase } from "@/api/apiClient";
 import { Settings2, Save, Clock, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +32,7 @@ export default function Settings() {
 
   async function loadSettings() {
     try {
-      const data = await base44.entities.ClinicSettings.list("-created_at", 1);
+      const data = await api.entities.ClinicSettings.list("-created_at", 1);
       if (data[0]) {
         const s = data[0];
         setSettingsId(s.id);
@@ -88,9 +88,9 @@ export default function Settings() {
         working_hours: JSON.stringify(hours),
       };
       if (settingsId) {
-        await base44.entities.ClinicSettings.update(settingsId, data);
+        await api.entities.ClinicSettings.update(settingsId, data);
       } else {
-        const created = await base44.entities.ClinicSettings.create(data);
+        const created = await api.entities.ClinicSettings.create(data);
         setSettingsId(created.id);
       }
       setSaved(true);

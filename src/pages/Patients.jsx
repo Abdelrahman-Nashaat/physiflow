@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { Link } from "react-router-dom";
 import { Plus, Search, User, Phone, ArrowLeft, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -35,7 +35,7 @@ export default function Patients() {
 
   async function loadPatients() {
     setLoading(true);
-    const data = await base44.entities.Patient.list("-created_date", 200);
+    const data = await api.entities.Patient.list("-created_date", 200);
     setPatients(data);
     setFiltered(data);
     setLoading(false);

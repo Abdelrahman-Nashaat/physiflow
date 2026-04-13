@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
@@ -19,10 +19,10 @@ export default function Analytics() {
   async function loadData() {
     setLoading(true);
     const [patients, appointments, invoices, sessions] = await Promise.all([
-      base44.entities.Patient.list("-created_date", 500),
-      base44.entities.Appointment.list("-date", 500),
-      base44.entities.Invoice.list("-date", 500),
-      base44.entities.SessionNote.list("-session_date", 500),
+      api.entities.Patient.list("-created_date", 500),
+      api.entities.Appointment.list("-date", 500),
+      api.entities.Invoice.list("-date", 500),
+      api.entities.SessionNote.list("-session_date", 500),
     ]);
 
     // Monthly revenue (last 6 months)

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/apiClient";
 import { X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,7 @@ export default function ExerciseFormModal({ exercise, onClose, onSaved }) {
 
   async function generateInstructions() {
     setGenerating(true);
-    const res = await base44.integrations.Core.InvokeLLM({
+    const res = await api.integrations.Core.InvokeLLM({
       prompt: `أنت معالج طبيعي خبير. اكتب تعليمات احترافية واضحة باللغة العربية للتمرين التالي:
 اسم التمرين: ${form.name}
 الفئة: ${form.category}
@@ -45,9 +45,9 @@ export default function ExerciseFormModal({ exercise, onClose, onSaved }) {
       duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : undefined,
     };
     if (exercise?.id) {
-      await base44.entities.ExerciseTemplate.update(exercise.id, data);
+      await api.entities.ExerciseTemplate.update(exercise.id, data);
     } else {
-      await base44.entities.ExerciseTemplate.create(data);
+      await api.entities.ExerciseTemplate.create(data);
     }
     onSaved();
   }

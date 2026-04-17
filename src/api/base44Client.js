@@ -1,6 +1,6 @@
 // =============================================
-// base44Client.js - Supabase Replacement
-// Same API as Base44 → zero changes in pages
+// physioflow API client - Supabase
+// Unified API layer for all database operations
 // =============================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -10,7 +10,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Map Base44 entity names → Supabase table names
+// Map entity names → Supabase table names
 const TABLE_MAP = {
   Patient: 'patients',
   Appointment: 'appointments',
@@ -34,7 +34,7 @@ function parseSort(sortField) {
   const isDesc = sortField.startsWith('-');
   let field = isDesc ? sortField.slice(1) : sortField;
   
-  // Map Base44 field names to Supabase
+  // Map field names to Supabase columns
   const fieldMap = {
     'created_date': 'created_at',
     'date': 'date',
@@ -47,7 +47,7 @@ function parseSort(sortField) {
   return { field, ascending: !isDesc };
 }
 
-// Create entity wrapper with same API as Base44
+// Create entity wrapper
 function createEntityWrapper(entityName) {
   const table = TABLE_MAP[entityName];
   if (!table) throw new Error(`Unknown entity: ${entityName}`);
@@ -181,7 +181,7 @@ const auth = {
 };
 
 // =============================================
-// Main export - same interface as Base44
+// Main export
 // =============================================
 export const base44 = {
   entities: new Proxy({}, {
